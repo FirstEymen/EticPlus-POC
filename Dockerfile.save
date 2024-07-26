@@ -1,0 +1,11 @@
+# Temel imaj olarak bir Java imajı kullanın
+FROM openjdk:17-jdk-alpine
+
+# Çalışma dizinini oluşturun
+WORKDIR /app
+
+# JAR dosyasını çalışma dizinine kopyalayın
+COPY target/my-java-app.jar app.jar
+
+# Uygulamayı çalıştırın
+ENTRYPOINT ["java", "-jar", 
