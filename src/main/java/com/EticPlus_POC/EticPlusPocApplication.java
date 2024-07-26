@@ -9,6 +9,4 @@ public class EticPlusPocApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EticPlusPocApplication.class, args);
 	}
-
-
 }
