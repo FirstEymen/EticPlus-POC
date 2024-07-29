@@ -37,10 +37,9 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
                 )
-                .csrf(csrf -> csrf.disable()) // Tüm CSRF korumasını devre dışı bırakır
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/register", "/api/login").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -50,14 +49,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // Tüm origin'lere izin ver
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Tüm HTTP metotlarına izin ver
+        configuration.setAllowedOrigins(List.of("*")); // Tüm origin'lere izin ver
+        configuration.setAllowedMethods(List.of("*")); // Tüm HTTP metotlarına izin ver
         configuration.setAllowedHeaders(List.of("*")); // Tüm header'lara izin ver
-        configuration.setExposedHeaders(List.of("Authorization")); // Yanıt header'larını belirleyin
+        configuration.setExposedHeaders(List.of("*")); // Yanıt header'larını belirleyin
         configuration.setAllowCredentials(true); // Kimlik bilgilerini içeren istekleri kabul et
         configuration.setMaxAge(3600L); // Pre-flight isteklerinin önbellek süresi (1 saat)
 
