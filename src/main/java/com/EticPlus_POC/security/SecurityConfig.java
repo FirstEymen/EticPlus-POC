@@ -14,9 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.time.Duration;
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -34,16 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors
-                        .configurationSource(request -> {
-                            CorsConfiguration corsConfiguration = new CorsConfiguration();
-                            corsConfiguration.addAllowedOriginPattern("*");
-                            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                            corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-                            corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
-                            corsConfiguration.setAllowCredentials(true);
-                            corsConfiguration.setMaxAge(Duration.ofHours(1));
-                            return corsConfiguration;
-                        })
+                        .configurationSource(corsConfigurationSource())
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/register", "/api/login")
@@ -58,6 +50,21 @@ public class SecurityConfig {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*")); // Tüm origin'lere izin ver
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Tüm HTTP metotlarına izin ver
+        configuration.setAllowedHeaders(List.of("*")); // Tüm header'lara izin ver
+        configuration.setExposedHeaders(List.of("Authorization")); // Yanıt header'larını belirleyin
+        configuration.setAllowCredentials(true); // Kimlik bilgilerini içeren istekleri kabul et
+        configuration.setMaxAge(3600L); // Pre-flight isteklerinin önbellek süresi (1 saat)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Tüm yollar için CORS konfigürasyonu uygula
+        return source;
     }
 
     @Bean
