@@ -36,10 +36,10 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration corsConfiguration = new CorsConfiguration();
-                            corsConfiguration.setAllowedOrigins(Arrays.asList("http://domain1.com", "http://domain2.com"));
-                            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-                            corsConfiguration.setAllowedHeaders(Arrays.asList("header1", "header2", "header3"));
-                            corsConfiguration.setExposedHeaders(Arrays.asList("header1", "header2"));
+                            corsConfiguration.addAllowedOriginPattern("*");
+                            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                            corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+                            corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
                             corsConfiguration.setAllowCredentials(true);
                             corsConfiguration.setMaxAge(Duration.ofHours(1));
                             return corsConfiguration;
