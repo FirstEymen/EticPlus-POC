@@ -37,10 +37,9 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
                 )
-                .csrf(csrf -> csrf.disable()) // Tüm CSRF korumasını devre dışı bırakır
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/register", "/api/login").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -50,19 +49,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // Tüm origin'lere izin ver
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Tüm HTTP metotlarına izin ver
-        configuration.setAllowedHeaders(List.of("*")); // Tüm header'lara izin ver
-        configuration.setExposedHeaders(List.of("Authorization")); // Yanıt header'larını belirleyin
-        configuration.setAllowCredentials(true); // Kimlik bilgilerini içeren istekleri kabul et
-        configuration.setMaxAge(3600L); // Pre-flight isteklerinin önbellek süresi (1 saat)
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Tüm yollar için CORS konfigürasyonu uygula
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
