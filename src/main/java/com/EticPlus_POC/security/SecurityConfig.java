@@ -37,9 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/register", "/api/login")
-                )
+                .csrf(csrf -> csrf.disable()) // Tüm CSRF korumasını devre dışı bırakır
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/register", "/api/login").permitAll()
                         .anyRequest().authenticated()
@@ -51,6 +49,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
