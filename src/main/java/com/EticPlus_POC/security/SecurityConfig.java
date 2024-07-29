@@ -52,15 +52,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Tüm origin'lere izin ver
-        configuration.setAllowedMethods(List.of("*")); // Tüm HTTP metotlarına izin ver
-        configuration.setAllowedHeaders(List.of("*")); // Tüm header'lara izin ver
-        configuration.setExposedHeaders(List.of("*")); // Yanıt header'larını belirleyin
-        configuration.setAllowCredentials(true); // Kimlik bilgilerini içeren istekleri kabul et
-        configuration.setMaxAge(3600L); // Pre-flight isteklerinin önbellek süresi (1 saat)
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Tüm yollar için CORS konfigürasyonu uygula
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
