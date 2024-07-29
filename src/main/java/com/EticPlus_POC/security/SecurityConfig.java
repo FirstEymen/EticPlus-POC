@@ -13,6 +13,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.time.Duration;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +33,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            CorsConfiguration corsConfiguration = new CorsConfiguration();
+                            corsConfiguration.setAllowedOrigins(Arrays.asList("http://domain1.com", "http://domain2.com"));
+                            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                            corsConfiguration.setAllowedHeaders(Arrays.asList("header1", "header2", "header3"));
+                            corsConfiguration.setExposedHeaders(Arrays.asList("header1", "header2"));
+                            corsConfiguration.setAllowCredentials(true);
+                            corsConfiguration.setMaxAge(Duration.ofHours(1));
+                            return corsConfiguration;
+                        })
+                )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/register", "/api/login")
                 )
