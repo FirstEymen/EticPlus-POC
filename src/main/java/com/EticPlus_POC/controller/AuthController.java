@@ -38,12 +38,16 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
+            if (user.getPackageType() == null) {
+                return ResponseEntity.badRequest().body("Please select a valid package type.");
+            }
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Registration failed");
         }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {

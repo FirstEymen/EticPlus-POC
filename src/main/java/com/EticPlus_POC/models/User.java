@@ -13,7 +13,7 @@ public class User {
     private String storeName;
     private String description;
     private String password;
-    private String packageType; // Silver, Gold, Platinum
+    private PackageType packageType;
 
     public String getStoreName() {
         return storeName;
@@ -39,11 +39,15 @@ public class User {
         this.password = password;
     }
 
-    public String getPackageType() {
+    public PackageType getPackageType() {
         return packageType;
     }
 
-    public void setPackageType(String packageType) {
+    public void setPackageType(PackageType packageType) {
         this.packageType = packageType;
+    }
+
+    public enum PackageType {
+        SILVER, GOLD, PLATINUM
     }
 }
