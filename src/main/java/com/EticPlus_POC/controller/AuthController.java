@@ -11,10 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -47,7 +44,6 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
@@ -61,6 +57,21 @@ public class AuthController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Authentication failed");
+        }
+    }
+
+    @PostMapping("/togglePlugin")
+    public ResponseEntity<?> togglePlugin(@RequestParam String userId, @RequestParam String pluginName) {
+        try {
+            User user = userService.findById(userId);
+            if (user != null) {
+                userService.togglePlugin(user, pluginName);
+                return ResponseEntity.ok("Plugin status updated.");
+            } else {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error toggling plugin");
         }
     }
 }

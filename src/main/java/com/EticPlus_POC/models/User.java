@@ -4,6 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "platformUser")
 public class User {
 
@@ -14,6 +17,30 @@ public class User {
     private String description;
     private String password;
     private PackageType packageType;
+    private List<Plugin> plugins = new ArrayList<>();
+
+    public User() {}
+
+    public User(String storeName, String description, String password, PackageType packageType) {
+        this.storeName = storeName;
+        this.description = description;
+        this.password = password;
+        this.packageType = packageType;
+        initializePlugins();
+    }
+
+    private void initializePlugins() {
+        plugins.add(new Plugin("Benim Sayfam", true));
+        plugins.add(new Plugin("Günlük Satış Raporu", false));
+        plugins.add(new Plugin("Google Analytics", false));
+        plugins.add(new Plugin("Chatmate", false));
+        plugins.add(new Plugin("ReviewMe", false));
+        plugins.add(new Plugin("GiftSend", false));
+    }
+
+    public List<Plugin> getPlugins() {
+        return plugins;
+    }
 
     public String getStoreName() {
         return storeName;
