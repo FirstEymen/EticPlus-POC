@@ -5,11 +5,10 @@ import com.EticPlus_POC.models.User;
 public class UserRegistrationRequest {
 
     private String storeName;
-    private String categoryId; // StoreCategory ID'si
+    private String category;
     private String password;
     private User.PackageType packageType;
 
-    // Getters and Setters
     public String getStoreName() {
         return storeName;
     }
@@ -18,12 +17,12 @@ public class UserRegistrationRequest {
         this.storeName = storeName;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getPassword() {
