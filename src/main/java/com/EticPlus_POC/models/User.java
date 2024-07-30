@@ -14,16 +14,16 @@ public class User {
     private String id;
     @Indexed(unique = true)
     private String storeName;
-    private String description;
+    private StoreCategory category; // StoreCategory nesnesi
     private String password;
     private PackageType packageType;
     private List<Plugin> plugins = new ArrayList<>();
 
     public User() {}
 
-    public User(String storeName, String description, String password, PackageType packageType) {
+    public User(String storeName, StoreCategory category, String password, PackageType packageType) {
         this.storeName = storeName;
-        this.description = description;
+        this.category = category;
         this.password = password;
         this.packageType = packageType;
         initializePlugins();
@@ -50,12 +50,12 @@ public class User {
         this.storeName = storeName;
     }
 
-    public String getDescription() {
-        return description;
+    public StoreCategory getCategory() {
+        return category;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCategory(StoreCategory category) {
+        this.category = category;
     }
 
     public String getPassword() {
