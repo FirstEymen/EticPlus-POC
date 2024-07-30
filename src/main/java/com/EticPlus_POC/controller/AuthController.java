@@ -10,7 +10,6 @@ import com.EticPlus_POC.utility.JwtUtil;
 import com.EticPlus_POC.utility.UserRegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +39,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
         try {
-            StoreCategory category = storeCategoryService.findById(request.getCategoryId());
+            StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {
                 return ResponseEntity.badRequest().body("Invalid category");
             }

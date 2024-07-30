@@ -14,7 +14,7 @@ public class User {
     private String id;
     @Indexed(unique = true)
     private String storeName;
-    private StoreCategory category; // StoreCategory nesnesi
+    private StoreCategory category;
     private String password;
     private PackageType packageType;
     private List<Plugin> plugins = new ArrayList<>();
