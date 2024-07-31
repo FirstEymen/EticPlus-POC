@@ -101,4 +101,14 @@ public class AuthController {
         List<StoreCategory> categories = storeCategoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
+
+    @PostMapping("/deleteAccount")
+    public ResponseEntity<?> deleteAccount(@RequestParam String userId) {
+        boolean success = userService.deleteAccountById(userId);
+        if (success) {
+            return ResponseEntity.ok("Account has been deleted.");
+        } else {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+    }
 }

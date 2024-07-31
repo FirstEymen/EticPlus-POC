@@ -77,7 +77,7 @@ public class UserService {
     }
 
     private void setDefaultPlugins(User user) {
-        user.getPlugins().add(new Plugin("Benim Sayfam", true)); // Varsayılan aktif
+        user.getPlugins().add(new Plugin("Benim Sayfam", true));
         user.getPlugins().add(new Plugin("Günlük Satış Raporu", false));
         user.getPlugins().add(new Plugin("Google Analytics", false));
         user.getPlugins().add(new Plugin("Chatmate", false));
@@ -107,5 +107,14 @@ public class UserService {
         });
 
         userRepository.save(user);
+    }
+
+    public boolean deleteAccountById(String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            userRepository.deleteById(userId);
+            return true;
+        }
+        return false;
     }
 }
