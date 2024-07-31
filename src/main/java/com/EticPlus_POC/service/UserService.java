@@ -25,10 +25,7 @@ public class UserService {
             throw new IllegalArgumentException("Store name already exists.");
         }
 
-        if (userRepository.findAll().stream().anyMatch(u -> passwordEncoder.matches(user.getPassword(), u.getPassword()))) {
-            throw new IllegalArgumentException("This password is already in use. Please choose a different password.");
-        }
-
+        // Şifre kontrolü veritabanı seviyesinde yapılabilir.
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -78,8 +75,7 @@ public class UserService {
     }
 
     public User findById(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user.orElse(null);
+        return userRepository.findById(userId).orElse(null);  // Daha kısa ve net
     }
 
     public void togglePlugin(User user, String pluginName) {
