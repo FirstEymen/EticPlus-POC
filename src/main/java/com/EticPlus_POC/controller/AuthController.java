@@ -42,6 +42,14 @@ public class AuthController {
             userService.validateStoreName(request.getStoreName());
             userService.validatePassword(request.getPassword());
 
+            if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Category cannot be empty");
+            }
+
+            if (request.getPackageType() == null) {
+                return ResponseEntity.badRequest().body("Package type cannot be null");
+            }
+
             StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {
                 return ResponseEntity.badRequest().body("Invalid category");
