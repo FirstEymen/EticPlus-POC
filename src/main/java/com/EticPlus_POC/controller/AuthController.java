@@ -39,6 +39,9 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
         try {
+            // Validate store name here before proceeding
+            userService.validateStoreName(request.getStoreName());
+
             StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {
                 return ResponseEntity.badRequest().body("Invalid category");

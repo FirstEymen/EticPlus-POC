@@ -18,6 +18,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(User user) {
+        validateStoreName(user.getStoreName());
+
         if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
             throw new IllegalArgumentException("Store name already exists.");
         }
@@ -25,6 +27,27 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         setDefaultPlugins(user);
         return userRepository.save(user);
+    }
+
+    public void validateStoreName(String storeName) {
+        if (storeName == null || storeName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Store name cannot be empty.");
+        }
+        if (storeName.length() < 3) {
+            throw new IllegalArgumentException("Store name must be at least 3 characters long.");
+        }
+        if (storeName.length() > 20) {
+            throw new IllegalArgumentException("Store name cannot be more than 20 characters long.");
+        }
+        if (storeName.startsWith(" ")) {
+            throw new IllegalArgumentException("Store name cannot start with a space.");
+        }
+        if (storeName.contains("  ")) {
+            throw new IllegalArgumentException("Store name cannot contain consecutive spaces.");
+        }
+        if (!storeName.matches("^[a-zA-Z0-9 ]*$")) {
+            throw new IllegalArgumentException("Store name cannot contain special characters.");
+        }
     }
 
     private void setDefaultPlugins(User user) {
