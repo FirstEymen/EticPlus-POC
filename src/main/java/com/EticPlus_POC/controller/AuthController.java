@@ -47,6 +47,8 @@ public class AuthController {
             User user = new User(request.getStoreName(), category, request.getPassword(), request.getPackageType());
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Registration failed");
         }

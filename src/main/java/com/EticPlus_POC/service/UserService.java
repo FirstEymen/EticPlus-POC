@@ -18,6 +18,10 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(User user) {
+        if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
+            throw new IllegalArgumentException("Store name already exists.");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         setDefaultPlugins(user);
         return userRepository.save(user);
