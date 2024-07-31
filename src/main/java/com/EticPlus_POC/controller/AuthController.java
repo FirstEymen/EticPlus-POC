@@ -39,6 +39,17 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
         try {
+            userService.validateStoreName(request.getStoreName());
+            userService.validatePassword(request.getPassword());
+
+            if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Category cannot be empty");
+            }
+
+            if (request.getPackageType() == null) {
+                return ResponseEntity.badRequest().body("Package type cannot be null");
+            }
+
             StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {
                 return ResponseEntity.badRequest().body("Invalid category");
@@ -89,5 +100,15 @@ public class AuthController {
     public ResponseEntity<List<StoreCategory>> getAllCategories() {
         List<StoreCategory> categories = storeCategoryService.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @PostMapping("/deleteAccount")
+    public ResponseEntity<?> deleteAccount(@RequestParam String userId) {
+        boolean success = userService.deleteAccountById(userId);
+        if (success) {
+            return ResponseEntity.ok("Account has been deleted.");
+        } else {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
     }
 }
