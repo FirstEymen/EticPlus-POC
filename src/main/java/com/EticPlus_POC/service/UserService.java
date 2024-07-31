@@ -30,9 +30,10 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        setDefaultPlugins(user);
         return userRepository.save(user);
     }
+
+    // Diğer metodlar
 
     public void validateStoreName(String storeName) {
         if (storeName == null || storeName.trim().isEmpty()) {
@@ -73,19 +74,6 @@ public class UserService {
         }
         if (!password.matches(".*[0-9].*")) {
             throw new IllegalArgumentException("Password must contain at least one digit.");
-        }
-    }
-
-    private void setDefaultPlugins(User user) {
-        user.getPlugins().add(new Plugin("Benim Sayfam", true));
-        user.getPlugins().add(new Plugin("Günlük Satış Raporu", false));
-        user.getPlugins().add(new Plugin("Google Analytics", false));
-        user.getPlugins().add(new Plugin("Chatmate", false));
-        user.getPlugins().add(new Plugin("ReviewMe", false));
-        user.getPlugins().add(new Plugin("GiftSend", false));
-
-        if (user.getPackageType() == User.PackageType.PLATINUM) {
-            user.getPlugins().forEach(plugin -> plugin.setActive(true));
         }
     }
 
