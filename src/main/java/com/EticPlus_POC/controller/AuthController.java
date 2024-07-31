@@ -39,8 +39,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
         try {
-            // Validate store name here before proceeding
             userService.validateStoreName(request.getStoreName());
+            userService.validatePassword(request.getPassword());
 
             StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {

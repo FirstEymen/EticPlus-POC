@@ -19,9 +19,14 @@ public class UserService {
 
     public User registerUser(User user) {
         validateStoreName(user.getStoreName());
+        validatePassword(user.getPassword());
 
         if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
             throw new IllegalArgumentException("Store name already exists.");
+        }
+
+        if (userRepository.findAll().stream().anyMatch(u -> passwordEncoder.matches(user.getPassword(), u.getPassword()))) {
+            throw new IllegalArgumentException("This password is already in use. Please choose a different password.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -47,6 +52,27 @@ public class UserService {
         }
         if (!storeName.matches("^[a-zA-Z0-9 ]*$")) {
             throw new IllegalArgumentException("Store name cannot contain special characters.");
+        }
+    }
+
+    public void validatePassword(String password) {
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty.");
+        }
+        if (password.length() < 4) {
+            throw new IllegalArgumentException("Password must be at least 4 characters long.");
+        }
+        if (password.length() > 15) {
+            throw new IllegalArgumentException("Password cannot be more than 15 characters long.");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter.");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one lowercase letter.");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            throw new IllegalArgumentException("Password must contain at least one digit.");
         }
     }
 
