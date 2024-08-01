@@ -125,10 +125,12 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("User not found.");
             }
 
-            if (updateRequest.getStoreName() != null) {
+            if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
+                userService.validateStoreName(updateRequest.getStoreName());
                 user.setStoreName(updateRequest.getStoreName());
             }
-            if (updateRequest.getCategory() != null) {
+
+            if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
                 StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
                 if (category != null) {
                     user.setCategory(category);
@@ -136,13 +138,21 @@ public class AuthController {
                     return ResponseEntity.badRequest().body("Invalid category.");
                 }
             }
+
             if (updateRequest.getPackageType() != null) {
                 user.setPackageType(updateRequest.getPackageType());
                 user.initializePlugins();
             }
 
+            if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
+                userService.validatePassword(updateRequest.getPassword());
+                user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+            }
+
             User updatedUser = userService.updateUser(user);
             return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error updating profile");
         }

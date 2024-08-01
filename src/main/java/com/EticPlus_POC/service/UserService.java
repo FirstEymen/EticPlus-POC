@@ -92,9 +92,10 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        validateStoreName(user.getStoreName());
+        validatePassword(user.getPassword());
         return userRepository.save(user);
     }
-
     public boolean deleteAccountById(String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
