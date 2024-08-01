@@ -1,5 +1,6 @@
 package com.EticPlus_POC.service;
 
+import com.EticPlus_POC.exception.BusinessException;
 import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.User;
 import com.EticPlus_POC.repository.UserRepository;
@@ -22,9 +23,10 @@ public class UserService {
         validatePassword(user.getPassword());
 
         if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
-            throw new IllegalArgumentException("Store name already exists.");
+            throw new BusinessException("code","msg");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 

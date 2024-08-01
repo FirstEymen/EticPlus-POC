@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Business exception handler
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode(), e.getErrorDesc());
