@@ -24,13 +24,7 @@ public class UserService {
         if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
             throw new IllegalArgumentException("Store name already exists.");
         }
-
-        if (userRepository.findAll().stream().anyMatch(u -> passwordEncoder.matches(user.getPassword(), u.getPassword()))) {
-            throw new IllegalArgumentException("This password is already in use. Please choose a different password.");
-        }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        setDefaultPlugins(user);
         return userRepository.save(user);
     }
 
@@ -76,22 +70,8 @@ public class UserService {
         }
     }
 
-    private void setDefaultPlugins(User user) {
-        user.getPlugins().add(new Plugin("Benim Sayfam", true));
-        user.getPlugins().add(new Plugin("Günlük Satış Raporu", false));
-        user.getPlugins().add(new Plugin("Google Analytics", false));
-        user.getPlugins().add(new Plugin("Chatmate", false));
-        user.getPlugins().add(new Plugin("ReviewMe", false));
-        user.getPlugins().add(new Plugin("GiftSend", false));
-
-        if (user.getPackageType() == User.PackageType.PLATINUM) {
-            user.getPlugins().forEach(plugin -> plugin.setActive(true));
-        }
-    }
-
     public User findById(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user.orElse(null);
+        return userRepository.findById(userId).orElse(null);
     }
 
     public void togglePlugin(User user, String pluginName) {

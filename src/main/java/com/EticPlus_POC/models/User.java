@@ -36,7 +36,13 @@ public class User {
         plugins.add(new Plugin("Chatmate", false));
         plugins.add(new Plugin("ReviewMe", false));
         plugins.add(new Plugin("GiftSend", false));
+
+        if (packageType == PackageType.PLATINUM) {
+            plugins.forEach(plugin -> plugin.setActive(true));
+        }
     }
+
+    // Getter ve Setter metodları
 
     public List<Plugin> getPlugins() {
         return plugins;

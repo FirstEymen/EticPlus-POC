@@ -22,9 +22,6 @@ public class StoreCategoryService {
     }
 
     public StoreCategory findByName(String name) {
-        return storeCategoryRepository.findAll().stream()
-                .filter(category -> category.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        return storeCategoryRepository.findByName(name);
     }
 }
