@@ -22,6 +22,6 @@ public class StoreCategoryService {
     }
 
     public StoreCategory findByName(String name) {
-        return storeCategoryRepository.findByName(name);  // Önceden tanımlı özel bir sorgu ile
+        return storeCategoryRepository.findByName(name);
     }
 }

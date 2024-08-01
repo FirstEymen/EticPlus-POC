@@ -24,13 +24,9 @@ public class UserService {
         if (userRepository.findByStoreName(user.getStoreName()).isPresent()) {
             throw new IllegalArgumentException("Store name already exists.");
         }
-
-        // Şifre kontrolü veritabanı seviyesinde yapılabilir.
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-
-    // Diğer metodlar
 
     public void validateStoreName(String storeName) {
         if (storeName == null || storeName.trim().isEmpty()) {
@@ -75,7 +71,7 @@ public class UserService {
     }
 
     public User findById(String userId) {
-        return userRepository.findById(userId).orElse(null);  // Daha kısa ve net
+        return userRepository.findById(userId).orElse(null);
     }
 
     public void togglePlugin(User user, String pluginName) {
