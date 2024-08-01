@@ -91,6 +91,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
     public boolean deleteAccountById(String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {

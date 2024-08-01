@@ -1,5 +1,6 @@
 package com.EticPlus_POC.controller;
 
+import com.EticPlus_POC.dto.UserUpdateRequest;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
 import com.EticPlus_POC.service.StoreCategoryService;
@@ -113,6 +114,50 @@ public class AuthController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving profile");
+        }
+    }
+
+    @PutMapping("/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestBody UserUpdateRequest updateRequest) {
+        try {
+            User user = userService.findById(updateRequest.getUserId());
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+
+            if (updateRequest.getStoreName() != null) {
+                user.setStoreName(updateRequest.getStoreName());
+            }
+            if (updateRequest.getCategory() != null) {
+                StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
+                if (category != null) {
+                    user.setCategory(category);
+                } else {
+                    return ResponseEntity.badRequest().body("Invalid category.");
+                }
+            }
+            if (updateRequest.getPackageType() != null) {
+                user.setPackageType(updateRequest.getPackageType());
+                user.initializePlugins();
+            }
+
+            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating profile");
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                jwtUtil.invalidateToken(jwtToken);
+            }
+            return ResponseEntity.ok("User logged out.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error during logout");
         }
     }
 

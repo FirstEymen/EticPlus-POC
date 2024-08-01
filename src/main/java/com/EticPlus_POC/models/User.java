@@ -29,7 +29,7 @@ public class User {
         initializePlugins();
     }
 
-    private void initializePlugins() {
+    public void initializePlugins() {
         plugins.add(new Plugin("Benim Sayfam", true));
         plugins.add(new Plugin("Günlük Satış Raporu", false));
         plugins.add(new Plugin("Google Analytics", false));
