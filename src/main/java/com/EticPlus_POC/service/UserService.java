@@ -70,6 +70,9 @@ public class UserService {
         if (!password.matches(".*[0-9].*")) {
             throw new IllegalArgumentException("Password must contain at least one digit.");
         }
+        if (!password.matches("^[a-zA-Z0-9]*$")) {
+            throw new IllegalArgumentException("Password cannot contain special characters.");
+        }
     }
 
     public User findById(String userId) {
