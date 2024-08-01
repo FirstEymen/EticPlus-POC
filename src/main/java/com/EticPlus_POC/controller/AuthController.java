@@ -102,6 +102,20 @@ public class AuthController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestParam String userId) {
+        try {
+            User user = userService.findById(userId);
+            if (user != null) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving profile");
+        }
+    }
+
     @PostMapping("/deleteAccount")
     public ResponseEntity<?> deleteAccount(@RequestParam String userId) {
         boolean success = userService.deleteAccountById(userId);

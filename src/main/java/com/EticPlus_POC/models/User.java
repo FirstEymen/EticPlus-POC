@@ -42,8 +42,6 @@ public class User {
         }
     }
 
-    // Getter ve Setter metodları
-
     public List<Plugin> getPlugins() {
         return plugins;
     }
