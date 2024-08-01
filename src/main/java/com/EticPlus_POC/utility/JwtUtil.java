@@ -8,12 +8,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+
 @Component
 public class JwtUtil {
 
     private final String SECRET_KEY = "your_secret_key";
+    private final Set<String> tokenBlacklist = new HashSet<>();
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,6 +53,14 @@ public class JwtUtil {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isTokenBlacklisted(token));
+    }
+
+    public void invalidateToken(String token) {
+        tokenBlacklist.add(token);
+    }
+
+    private boolean isTokenBlacklisted(String token) {
+        return tokenBlacklist.contains(token);
     }
 }

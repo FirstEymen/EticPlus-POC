@@ -1,5 +1,6 @@
 package com.EticPlus_POC.controller;
 
+import com.EticPlus_POC.dto.UserUpdateRequest;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
 import com.EticPlus_POC.service.StoreCategoryService;
@@ -100,6 +101,74 @@ public class AuthController {
     public ResponseEntity<List<StoreCategory>> getAllCategories() {
         List<StoreCategory> categories = storeCategoryService.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestParam String userId) {
+        try {
+            User user = userService.findById(userId);
+            if (user != null) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving profile");
+        }
+    }
+
+    @PutMapping("/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestBody UserUpdateRequest updateRequest) {
+        try {
+            User user = userService.findById(updateRequest.getUserId());
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+
+            if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
+                userService.validateStoreName(updateRequest.getStoreName());
+                user.setStoreName(updateRequest.getStoreName());
+            }
+
+            if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
+                StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
+                if (category != null) {
+                    user.setCategory(category);
+                } else {
+                    return ResponseEntity.badRequest().body("Invalid category.");
+                }
+            }
+
+            if (updateRequest.getPackageType() != null) {
+                user.setPackageType(updateRequest.getPackageType());
+                user.initializePlugins();
+            }
+
+            if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
+                userService.validatePassword(updateRequest.getPassword());
+                user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+            }
+
+            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating profile");
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                jwtUtil.invalidateToken(jwtToken);
+            }
+            return ResponseEntity.ok("User logged out.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error during logout");
+        }
     }
 
     @PostMapping("/deleteAccount")
