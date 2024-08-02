@@ -1,6 +1,8 @@
 package com.EticPlus_POC.controller;
 
+import com.EticPlus_POC.dto.UserProfileResponse;
 import com.EticPlus_POC.dto.UserUpdateRequest;
+import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
 import com.EticPlus_POC.service.StoreCategoryService;
@@ -82,6 +84,29 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/home")
+    public ResponseEntity<?> getHomePage(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
+
+                User user = userService.findByStoreName(username).orElse(null);
+
+                if (user != null) {
+                    List<Plugin> plugins = user.getPlugins();
+                    return ResponseEntity.ok(plugins);
+                } else {
+                    return ResponseEntity.badRequest().body("User not found.");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving home page");
+        }
+    }
+
     @PostMapping("/togglePlugin")
     public ResponseEntity<?> togglePlugin(@RequestParam String userId, @RequestParam String pluginName) {
         try {
@@ -108,12 +133,17 @@ public class AuthController {
         try {
             User user = userService.findById(userId);
             if (user != null) {
-                return ResponseEntity.ok(user);
+                UserProfileResponse profileResponse = new UserProfileResponse();
+                profileResponse.setStoreName(user.getStoreName());
+                profileResponse.setCategory(user.getCategory().getName());
+                profileResponse.setPackageType(String.valueOf(user.getPackageType()));
+
+                return ResponseEntity.ok(profileResponse);
             } else {
                 return ResponseEntity.badRequest().body("User not found.");
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error retrieving profile");
+            return ResponseEntity.badRequest().body("Error retrieving profile.");
         }
     }
 

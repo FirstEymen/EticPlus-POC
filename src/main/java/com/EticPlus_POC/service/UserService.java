@@ -107,4 +107,9 @@ public class UserService {
         }
         return false;
     }
+
+    public Optional<User> findByStoreName(String storeName) {
+        return userRepository.findByStoreName(storeName);
+    }
+
 }
