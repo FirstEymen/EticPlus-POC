@@ -129,60 +129,78 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestParam String userId) {
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
         try {
-            User user = userService.findById(userId);
-            if (user != null) {
-                UserProfileResponse profileResponse = new UserProfileResponse();
-                profileResponse.setStoreName(user.getStoreName());
-                profileResponse.setPassword(user.getPassword());
-                profileResponse.setCategory(user.getCategory().getName());
-                profileResponse.setPackageType(String.valueOf(user.getPackageType()));
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
 
-                return ResponseEntity.ok(profileResponse);
+                User user = userService.findByStoreName(username).orElse(null);
+
+                if (user != null) {
+                    UserProfileResponse profileResponse = new UserProfileResponse();
+                    profileResponse.setStoreName(user.getStoreName());
+                    profileResponse.setPassword(user.getPassword());
+                    profileResponse.setCategory(user.getCategory().getName());
+                    profileResponse.setPackageType(String.valueOf(user.getPackageType()));
+
+                    return ResponseEntity.ok(profileResponse);
+                } else {
+                    return ResponseEntity.badRequest().body("User not found.");
+                }
             } else {
-                return ResponseEntity.badRequest().body("User not found.");
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving profile.");
         }
     }
 
-
     @PutMapping("/updateProfile")
-    public ResponseEntity<?> updateProfile(@RequestBody UserUpdateRequest updateRequest) {
+    public ResponseEntity<?> updateProfile(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UserUpdateRequest updateRequest) {
         try {
-            User user = userService.findById(updateRequest.getUserId());
-            if (user == null) {
-                return ResponseEntity.badRequest().body("User not found.");
-            }
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
 
-            if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
-                userService.validateStoreName(updateRequest.getStoreName());
-                user.setStoreName(updateRequest.getStoreName());
-            }
-
-            if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
-                StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
-                if (category != null) {
-                    user.setCategory(category);
-                } else {
-                    return ResponseEntity.badRequest().body("Invalid category.");
+                User user = userService.findByStoreName(username).orElse(null);
+                if (user == null) {
+                    return ResponseEntity.badRequest().body("User not found.");
                 }
-            }
 
-            if (updateRequest.getPackageType() != null) {
-                user.setPackageType(updateRequest.getPackageType());
-                user.initializePlugins();
-            }
+                if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
+                    userService.validateStoreName(updateRequest.getStoreName());
+                    user.setStoreName(updateRequest.getStoreName());
+                }
 
-            if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
-                userService.validatePassword(updateRequest.getPassword());
-                user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
-            }
+                if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
+                    StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
+                    if (category != null) {
+                        user.setCategory(category);
+                    } else {
+                        return ResponseEntity.badRequest().body("Invalid category.");
+                    }
+                }
 
-            User updatedUser = userService.updateUser(user);
-            return ResponseEntity.ok(updatedUser);
+                if (updateRequest.getPackageType() != null) {
+                    user.setPackageType(updateRequest.getPackageType());
+                    user.initializePlugins();
+                }
+
+                if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
+                    if (updateRequest.getConfirmPassword() != null && updateRequest.getPassword().equals(updateRequest.getConfirmPassword())) {
+                        userService.validatePassword(updateRequest.getPassword());
+                        user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+                    } else {
+                        return ResponseEntity.badRequest().body("Passwords do not match.");
+                    }
+                }
+
+                User updatedUser = userService.updateUser(user);
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
