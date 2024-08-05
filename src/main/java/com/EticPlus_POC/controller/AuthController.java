@@ -168,15 +168,19 @@ public class AuthController {
                     return ResponseEntity.badRequest().body("User not found.");
                 }
 
+                boolean isUpdated = false;
+
                 if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
                     userService.validateStoreName(updateRequest.getStoreName());
                     user.setStoreName(updateRequest.getStoreName());
+                    isUpdated = true;
                 }
 
                 if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
                     StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
                     if (category != null) {
                         user.setCategory(category);
+                        isUpdated = true;
                     } else {
                         return ResponseEntity.badRequest().body("Invalid category.");
                     }
@@ -185,19 +189,25 @@ public class AuthController {
                 if (updateRequest.getPackageType() != null) {
                     user.setPackageType(updateRequest.getPackageType());
                     user.initializePlugins();
+                    isUpdated = true;
                 }
 
                 if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
                     if (updateRequest.getConfirmPassword() != null && updateRequest.getPassword().equals(updateRequest.getConfirmPassword())) {
                         userService.validatePassword(updateRequest.getPassword());
                         user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+                        isUpdated = true;
                     } else {
                         return ResponseEntity.badRequest().body("Passwords do not match.");
                     }
                 }
 
-                User updatedUser = userService.updateUser(user);
-                return ResponseEntity.ok(updatedUser);
+                if (isUpdated) {
+                    User updatedUser = userService.updateUser(user);
+                    return ResponseEntity.ok(updatedUser);
+                } else {
+                    return ResponseEntity.ok("No updates made.");
+                }
             } else {
                 return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
             }
