@@ -5,10 +5,10 @@ import com.EticPlus_POC.models.User;
 public class UserUpdateRequest {
     private String userId;
     private String storeName;
-    private String password;
     private String category;
     private User.PackageType packageType;
-
+    private String password;
+    private String confirmPassword;
 
     public String getUserId() {
         return userId;
@@ -48,5 +48,13 @@ public class UserUpdateRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }
