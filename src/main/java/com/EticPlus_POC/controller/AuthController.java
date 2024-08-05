@@ -129,24 +129,33 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestParam String userId) {
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
         try {
-            User user = userService.findById(userId);
-            if (user != null) {
-                UserProfileResponse profileResponse = new UserProfileResponse();
-                profileResponse.setStoreName(user.getStoreName());
-                profileResponse.setPassword(user.getPassword());
-                profileResponse.setCategory(user.getCategory().getName());
-                profileResponse.setPackageType(String.valueOf(user.getPackageType()));
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
 
-                return ResponseEntity.ok(profileResponse);
+                User user = userService.findByStoreName(username).orElse(null);
+
+                if (user != null) {
+                    UserProfileResponse profileResponse = new UserProfileResponse();
+                    profileResponse.setStoreName(user.getStoreName());
+                    profileResponse.setPassword(user.getPassword());
+                    profileResponse.setCategory(user.getCategory().getName());
+                    profileResponse.setPackageType(String.valueOf(user.getPackageType()));
+
+                    return ResponseEntity.ok(profileResponse);
+                } else {
+                    return ResponseEntity.badRequest().body("User not found.");
+                }
             } else {
-                return ResponseEntity.badRequest().body("User not found.");
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving profile.");
         }
     }
+
 
 
     @PutMapping("/updateProfile")
