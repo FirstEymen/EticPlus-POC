@@ -2,6 +2,7 @@ package com.EticPlus_POC.dto;
 
 public class UserProfileResponse {
     private String storeName;
+    private String password;
     private String category;
     private String packageType;
 
@@ -28,6 +29,12 @@ public class UserProfileResponse {
     public void setPackageType(String packageType) {
         this.packageType = packageType;
     }
-    
-}
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}

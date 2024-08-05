@@ -135,6 +135,7 @@ public class AuthController {
             if (user != null) {
                 UserProfileResponse profileResponse = new UserProfileResponse();
                 profileResponse.setStoreName(user.getStoreName());
+                profileResponse.setPassword(user.getPassword());
                 profileResponse.setCategory(user.getCategory().getName());
                 profileResponse.setPackageType(String.valueOf(user.getPackageType()));
 
@@ -146,6 +147,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Error retrieving profile.");
         }
     }
+
 
     @PutMapping("/updateProfile")
     public ResponseEntity<?> updateProfile(@RequestBody UserUpdateRequest updateRequest) {
