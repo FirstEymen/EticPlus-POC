@@ -90,13 +90,14 @@ public class UserService {
 
         user.getPlugins().forEach(plugin -> {
             if (plugin.getName().equals(pluginName)) {
-                if (user.getPackageType() == User.PackageType.PLATINUM || (!plugin.isActive() && activePluginsCount < 3) || plugin.isActive()) {
+                boolean canToggle = user.getPackageType() == User.PackageType.PLATINUM ||
+                        (!plugin.isActive() && activePluginsCount < 3) || plugin.isActive();
+                if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
                 }
             }
         });
-
         userRepository.save(user);
     }
 
