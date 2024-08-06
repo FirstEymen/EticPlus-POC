@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -108,19 +109,27 @@ public class AuthController {
     }
 
     @PostMapping("/togglePlugin")
-    public ResponseEntity<?> togglePlugin(@RequestParam String userId, @RequestParam String pluginName) {
+    public ResponseEntity<?> togglePlugin(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String pluginName) {
         try {
-            User user = userService.findById(userId);
-            if (user != null) {
-                userService.togglePlugin(user, pluginName);
-                return ResponseEntity.ok("Plugin status updated.");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
+
+                User user = userService.findByStoreName(username).orElse(null);
+                if (user != null) {
+                    userService.togglePlugin(user, pluginName);
+                    return ResponseEntity.ok("Plugin status updated.");
+                } else {
+                    return ResponseEntity.badRequest().body("User not found.");
+                }
             } else {
-                return ResponseEntity.badRequest().body("User not found.");
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error toggling plugin");
         }
     }
+
 
     @GetMapping("/categories")
     public ResponseEntity<List<StoreCategory>> getAllCategories() {
@@ -232,12 +241,31 @@ public class AuthController {
     }
 
     @PostMapping("/deleteAccount")
-    public ResponseEntity<?> deleteAccount(@RequestParam String userId) {
-        boolean success = userService.deleteAccountById(userId);
-        if (success) {
-            return ResponseEntity.ok("Account has been deleted.");
-        } else {
-            return ResponseEntity.badRequest().body("User not found.");
+    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtUtil.extractUsername(jwtToken);
+
+                Optional<User> userOptional = userService.findByStoreName(username);
+
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    boolean success = userService.deleteAccountById(user.getId());
+                    if (success) {
+                        return ResponseEntity.ok("Account has been deleted.");
+                    } else {
+                        return ResponseEntity.badRequest().body("Error deleting account.");
+                    }
+                } else {
+                    return ResponseEntity.badRequest().body("User not found.");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Authorization header missing or invalid.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error during account deletion.");
         }
     }
+
 }

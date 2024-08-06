@@ -49,6 +49,9 @@ public class UserService {
         if (!storeName.matches("^[a-zA-Z0-9 ]*$")) {
             throw new IllegalArgumentException("Store name cannot contain special characters.");
         }
+        if (storeName.matches(".*[çÇşŞğĞüÜöÖıİâÂîÎ].*")) {
+            throw new IllegalArgumentException("Store name cannot contain Turkish characters.");
+        }
     }
 
     public void validatePassword(String password) {
@@ -73,7 +76,10 @@ public class UserService {
         if (!password.matches("^[a-zA-Z0-9]*$")) {
             throw new IllegalArgumentException("Password cannot contain special characters.");
         }
-    }
+        if (password.matches(".*[çÇşŞğĞüÜöÖıİâÂîÎ].*")) {
+            throw new IllegalArgumentException("Password cannot contain Turkish characters.");
+        }
+        }
 
     public User findById(String userId) {
         return userRepository.findById(userId).orElse(null);
