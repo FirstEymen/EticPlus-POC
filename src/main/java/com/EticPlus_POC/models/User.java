@@ -12,7 +12,6 @@ public class User {
 
     @Id
     private String id;
-    @Indexed(unique = true)
     private String storeName;
     private StoreCategory category;
     private String password;
@@ -45,6 +44,15 @@ public class User {
     public List<Plugin> getPlugins() {
         return plugins;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
     public String getStoreName() {
         return storeName;

@@ -3,20 +3,11 @@ package com.EticPlus_POC.dto;
 import com.EticPlus_POC.models.User;
 
 public class UserUpdateRequest {
-    private String userId;
     private String storeName;
     private String category;
     private User.PackageType packageType;
     private String password;
     private String confirmPassword;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getStoreName() {
         return storeName;
