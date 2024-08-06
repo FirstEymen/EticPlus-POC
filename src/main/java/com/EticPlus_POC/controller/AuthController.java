@@ -130,7 +130,6 @@ public class AuthController {
         }
     }
 
-
     @GetMapping("/categories")
     public ResponseEntity<List<StoreCategory>> getAllCategories() {
         List<StoreCategory> categories = storeCategoryService.getAllCategories();
