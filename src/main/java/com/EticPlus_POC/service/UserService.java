@@ -90,19 +90,21 @@ public class UserService {
 
         user.getPlugins().forEach(plugin -> {
             if (plugin.getName().equals(pluginName)) {
+                if ("Benim Sayfam".equals(pluginName)) {
+                    return;
+                }
                 boolean canToggle = user.getPackageType() == User.PackageType.PLATINUM ||
                         (!plugin.isActive() && activePluginsCount < 3) || plugin.isActive();
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
                 } else {
-                    throw new IllegalArgumentException("Silver ve Gold paketlerde maksimum 3 eklenti aktif edilebilir.");
+                    throw new IllegalArgumentException("Up to 3 plugins can be activated for Silver and Gold packages.");
                 }
             }
         });
         userRepository.save(user);
     }
-
 
     public User updateUser(User user) {
         validateStoreName(user.getStoreName());
