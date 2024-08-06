@@ -41,7 +41,7 @@ public class User {
             plugins.forEach(plugin -> plugin.setActive(true));
         } else if (packageType == PackageType.SILVER || packageType == PackageType.GOLD) {
             long activePluginsCount = plugins.stream().filter(Plugin::isActive).count();
-            if (activePluginsCount > 2) {
+            if (activePluginsCount > 3) {
                 throw new IllegalArgumentException("Up to 3 plugins can be activated for Silver and Gold packages.");
             }
         }
