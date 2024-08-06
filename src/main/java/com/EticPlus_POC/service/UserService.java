@@ -64,6 +64,9 @@ public class UserService {
         if (password.length() > 15) {
             throw new IllegalArgumentException("Password cannot be more than 15 characters long.");
         }
+        if (password.contains(" ")) {
+            throw new IllegalArgumentException("Password cannot contain spaces.");
+        }
         if (!password.matches(".*[A-Z].*")) {
             throw new IllegalArgumentException("Password must contain at least one uppercase letter.");
         }
