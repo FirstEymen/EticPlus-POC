@@ -186,7 +186,6 @@ public class AuthController {
                     user.setStoreName(updateRequest.getStoreName());
                     isUpdated = true;
                 }
-
                 if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
                     StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
                     if (category != null) {
@@ -196,13 +195,11 @@ public class AuthController {
                         return ResponseEntity.badRequest().body("Invalid category.");
                     }
                 }
-
                 if (updateRequest.getPackageType() != null) {
                     user.setPackageType(updateRequest.getPackageType());
                     user.initializePlugins();
                     isUpdated = true;
                 }
-
                 if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
                     if (updateRequest.getConfirmPassword() != null && updateRequest.getPassword().equals(updateRequest.getConfirmPassword())) {
                         userService.validatePassword(updateRequest.getPassword());
@@ -212,7 +209,6 @@ public class AuthController {
                         return ResponseEntity.badRequest().body("Passwords do not match.");
                     }
                 }
-
                 if (isUpdated) {
                     User updatedUser = userService.updateUser(user);
                     return ResponseEntity.ok(updatedUser);
@@ -228,6 +224,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Error updating profile");
         }
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
