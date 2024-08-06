@@ -95,11 +95,14 @@ public class UserService {
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
+                } else {
+                    throw new IllegalArgumentException("Silver ve Gold paketlerde maksimum 3 eklenti aktif edilebilir.");
                 }
             }
         });
         userRepository.save(user);
     }
+
 
     public User updateUser(User user) {
         validateStoreName(user.getStoreName());
