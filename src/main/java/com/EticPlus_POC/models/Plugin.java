@@ -1,7 +1,7 @@
 package com.EticPlus_POC.models;
 
 public class Plugin {
-    private String name;
+    private final String name;
     private boolean isActive;
 
     public Plugin(String name, boolean isActive) {
