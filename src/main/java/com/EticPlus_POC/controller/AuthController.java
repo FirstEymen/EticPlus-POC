@@ -117,6 +117,10 @@ public class AuthController {
 
                 User user = userService.findByStoreName(username).orElse(null);
                 if (user != null) {
+                    // Debug: Print the incoming pluginName and available plugin names
+                    System.out.println("Incoming pluginName: " + pluginName);
+                    user.getPlugins().forEach(plugin -> System.out.println("Available Plugin: " + plugin.getName()));
+
                     userService.togglePlugin(user, pluginName);
                     return ResponseEntity.ok("Plugin status updated.");
                 } else {
