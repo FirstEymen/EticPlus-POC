@@ -40,9 +40,14 @@ public class AuthController {
     @Autowired
     private StoreCategoryService storeCategoryService;
 
+
+    public static class ErrorResponseDTO {
+        private String errorCode;
+        private String errorMessage;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
-        try {
             userService.validateStoreName(request.getStoreName());
             userService.validatePassword(request.getPassword());
 
@@ -62,11 +67,6 @@ public class AuthController {
             User user = new User(request.getStoreName(), category, request.getPassword(), request.getPackageType());
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Registration failed");
-        }
     }
 
     @PostMapping("/login")
