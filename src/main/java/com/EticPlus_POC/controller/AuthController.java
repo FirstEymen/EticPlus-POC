@@ -2,6 +2,7 @@ package com.EticPlus_POC.controller;
 
 import com.EticPlus_POC.dto.UserProfileResponse;
 import com.EticPlus_POC.dto.UserUpdateRequest;
+import com.EticPlus_POC.exception.BusinessException;
 import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,38 +50,52 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
+        try {
             userService.validateStoreName(request.getStoreName());
             userService.validatePassword(request.getPassword());
 
             if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("Category cannot be empty");
+                throw new BusinessException("CATEGORY_EMPTY", "Category cannot be empty");
             }
 
             if (request.getPackageType() == null) {
-                return ResponseEntity.badRequest().body("Package type cannot be null");
+                throw new BusinessException("PACKAGE_TYPE_NULL", "Package type cannot be null");
             }
 
             StoreCategory category = storeCategoryService.findByName(request.getCategory());
             if (category == null) {
-                return ResponseEntity.badRequest().body("Invalid category");
+                throw new BusinessException("INVALID_CATEGORY", "Invalid category");
             }
 
             User user = new User(request.getStoreName(), category, request.getPassword(), request.getPackageType());
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BusinessException("INTERNAL_SERVER_ERROR", "Bir hata oluştu: " + e.getMessage());
+        }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+        try {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getStoreName());
 
             if (passwordEncoder.matches(authenticationRequest.getPassword(), userDetails.getPassword())) {
                 final String jwt = jwtUtil.generateToken(userDetails);
                 return ResponseEntity.ok(new AuthenticationResponse(jwt));
             } else {
-                return ResponseEntity.badRequest().body("Invalid credentials");
+                throw new BusinessException("INVALID_CREDENTIALS", "Invalid credentials");
             }
+        } catch (UsernameNotFoundException e) {
+            throw new BusinessException("USER_NOT_FOUND", "User not found");
+        } catch (Exception e) {
+            throw new BusinessException("LOGIN_ERROR", "An error occurred during login: " + e.getMessage());
+        }
     }
+
 
     @GetMapping("/home")
     public ResponseEntity<?> getHomePage(@RequestHeader("Authorization") String authorizationHeader) {
