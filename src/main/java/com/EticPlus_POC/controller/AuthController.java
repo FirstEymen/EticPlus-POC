@@ -71,7 +71,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        try {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getStoreName());
 
             if (passwordEncoder.matches(authenticationRequest.getPassword(), userDetails.getPassword())) {
@@ -80,9 +79,6 @@ public class AuthController {
             } else {
                 return ResponseEntity.badRequest().body("Invalid credentials");
             }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Authentication failed");
-        }
     }
 
     @GetMapping("/home")
