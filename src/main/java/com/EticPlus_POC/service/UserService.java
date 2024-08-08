@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -41,6 +40,9 @@ public class UserService {
         StoreCategory category = storeCategoryService.findByName(request.getCategory());
         if (category == null) {
             throw new BusinessException("INVALID_CATEGORY", "Invalid category");
+        }
+        if (request.getPackageType() == null) {
+            throw new BusinessException("PACKAGE_NOT_SELECTED", "Package type must be selected.");
         }
 
         User user = new User(request.getStoreName(), category, request.getPassword(), request.getPackageType());
