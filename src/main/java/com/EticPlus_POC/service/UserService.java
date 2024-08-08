@@ -138,7 +138,7 @@ public class UserService {
                     return;
                 }
                 boolean canToggle = user.getPackageType() == User.PackageType.PLATINUM ||
-                        (!plugin.isActive() && activePluginsCount < 3) || plugin.isActive();
+                        (!plugin.isActive() && activePluginsCount < 4) || plugin.isActive();
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
