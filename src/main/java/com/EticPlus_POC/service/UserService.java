@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -41,6 +40,9 @@ public class UserService {
         StoreCategory category = storeCategoryService.findByName(request.getCategory());
         if (category == null) {
             throw new BusinessException("INVALID_CATEGORY", "Invalid category");
+        }
+        if (request.getPackageType() == null) {
+            throw new BusinessException("PACKAGE_NOT_SELECTED", "Package type must be selected.");
         }
 
         User user = new User(request.getStoreName(), category, request.getPassword(), request.getPackageType());
@@ -102,6 +104,9 @@ public class UserService {
             }
         }
 
+        if (isUpdated) {
+            userRepository.save(user);
+        }
         return isUpdated;
     }
 
@@ -137,6 +142,7 @@ public class UserService {
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
+                    userRepository.save(user);
                 } else {
                     throw new BusinessException("PLUGIN_LIMIT_EXCEEDED", "Cannot activate more plugins.");
                 }
