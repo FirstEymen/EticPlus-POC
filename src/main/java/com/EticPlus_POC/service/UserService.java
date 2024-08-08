@@ -104,6 +104,9 @@ public class UserService {
             }
         }
 
+        if (isUpdated) {
+            userRepository.save(user);
+        }
         return isUpdated;
     }
 
@@ -139,6 +142,7 @@ public class UserService {
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
+                    userRepository.save(user);
                 } else {
                     throw new BusinessException("PLUGIN_LIMIT_EXCEEDED", "Cannot activate more plugins.");
                 }
