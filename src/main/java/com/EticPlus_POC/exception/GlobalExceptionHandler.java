@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        ErrorResponse errorResponse = new ErrorResponse("INTERNAL_SERVER_ERROR", "Bir hata oluştu: " + e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("00", "Bir hata oluştu!");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 

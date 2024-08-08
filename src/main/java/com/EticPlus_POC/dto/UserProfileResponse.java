@@ -6,12 +6,27 @@ public class UserProfileResponse {
     private String category;
     private String packageType;
 
+    public UserProfileResponse(String storeName, String password, String category, String packageType) {
+        this.storeName = storeName;
+        this.password = password;
+        this.category = category;
+        this.packageType = packageType;
+    }
+
     public String getStoreName() {
         return storeName;
     }
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getCategory() {
@@ -28,13 +43,5 @@ public class UserProfileResponse {
 
     public void setPackageType(String packageType) {
         this.packageType = packageType;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
