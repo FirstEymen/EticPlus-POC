@@ -13,12 +13,18 @@ public class ActionLog {
     private String storeName;
     private String action;
     private LocalDateTime timestamp;
+    private String userId;
+    private String actionDetails;
 
-    public ActionLog(String storeName, String action, LocalDateTime timestamp) {
+    public ActionLog(String storeName, String action, LocalDateTime timestamp, String userId, String actionDetails) {
         this.storeName = storeName;
         this.action = action;
         this.timestamp = timestamp;
+        this.userId = userId;
+        this.actionDetails = actionDetails;
     }
+
+    // Getters and setters for all fields...
 
     public String getId() {
         return id;
@@ -50,5 +56,21 @@ public class ActionLog {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getActionDetails() {
+        return actionDetails;
+    }
+
+    public void setActionDetails(String actionDetails) {
+        this.actionDetails = actionDetails;
     }
 }

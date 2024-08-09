@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -57,7 +56,7 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
-        logAction(request.getStoreName(), "User Registered");
+        logAction(request.getStoreName(), "User Registered", savedUser.getId(), "User registered with package type: " + request.getPackageType());
         return savedUser;
     }
 
@@ -128,7 +127,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             userRepository.deleteById(userId);
-            logAction(user.get().getStoreName(), "Account Deleted");
+            logAction(user.get().getStoreName(), "Account Deleted", userId, "User account deleted");
             return true;
         }
         return false;
@@ -152,7 +151,7 @@ public class UserService {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
                     userRepository.save(user);
-                    logAction(user.getStoreName(), "Plugin toggled: " + pluginName);
+                    logAction(user.getStoreName(), "Plugin toggled: " + pluginName, user.getId(), "Plugin status changed to " + (plugin.isActive() ? "active" : "inactive"));
                 } else {
                     throw new BusinessException("PLUGIN_LIMIT_EXCEEDED", "Cannot activate more plugins.");
                 }
@@ -223,8 +222,8 @@ public class UserService {
     private String getJwtToken(String authorizationHeader) {
         return authorizationHeader.substring(7);
     }
-    private void logAction(String storeName, String action) {
-        ActionLog actionLog = new ActionLog(storeName, action, LocalDateTime.now());
+    private void logAction(String storeName, String action, String userId, String actionDetails) {
+        ActionLog actionLog = new ActionLog(storeName, action, LocalDateTime.now(), userId, actionDetails);
         actionLogRepository.save(actionLog);
     }
 
