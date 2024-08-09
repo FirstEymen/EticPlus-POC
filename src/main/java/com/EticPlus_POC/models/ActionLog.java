@@ -24,8 +24,6 @@ public class ActionLog {
         this.actionDetails = actionDetails;
     }
 
-    // Getters and setters for all fields...
-
     public String getId() {
         return id;
     }

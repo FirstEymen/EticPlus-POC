@@ -93,12 +93,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String jwtToken = authorizationHeader.substring(7);
-            jwtUtil.invalidateToken(jwtToken);
-        }
-        return ResponseEntity.ok("User logged out.");
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok("You have been successfully logged out.");
     }
 
     @PostMapping("/deleteAccount")
