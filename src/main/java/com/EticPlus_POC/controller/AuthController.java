@@ -3,9 +3,11 @@ package com.EticPlus_POC.controller;
 import com.EticPlus_POC.dto.UserProfileResponse;
 import com.EticPlus_POC.dto.UserUpdateRequest;
 import com.EticPlus_POC.exception.BusinessException;
+import com.EticPlus_POC.models.ActionLog;
 import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
+import com.EticPlus_POC.repository.ActionLogRepository;
 import com.EticPlus_POC.service.StoreCategoryService;
 import com.EticPlus_POC.service.UserService;
 import com.EticPlus_POC.utility.AuthenticationRequest;
@@ -34,6 +36,8 @@ public class AuthController {
 
     @Autowired
     private StoreCategoryService storeCategoryService;
+    @Autowired
+    private ActionLogRepository actionLogRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
@@ -106,5 +110,17 @@ public class AuthController {
         } else {
             return ResponseEntity.badRequest().body("Error deleting account.");
         }
+    }
+
+    @GetMapping("/actions")
+    public ResponseEntity<List<ActionLog>> getAllActions() {
+        List<ActionLog> actions = actionLogRepository.findAll();
+        return ResponseEntity.ok(actions);
+    }
+
+    @GetMapping("/actions/{storeName}")
+    public ResponseEntity<List<ActionLog>> getActionsByStoreName(@PathVariable String storeName) {
+        List<ActionLog> actions = actionLogRepository.findByStoreName(storeName);
+        return ResponseEntity.ok(actions);
     }
 }

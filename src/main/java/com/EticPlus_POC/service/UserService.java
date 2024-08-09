@@ -2,9 +2,11 @@ package com.EticPlus_POC.service;
 
 import com.EticPlus_POC.dto.UserUpdateRequest;
 import com.EticPlus_POC.exception.BusinessException;
+import com.EticPlus_POC.models.ActionLog;
 import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.StoreCategory;
 import com.EticPlus_POC.models.User;
+import com.EticPlus_POC.repository.ActionLogRepository;
 import com.EticPlus_POC.repository.UserRepository;
 import com.EticPlus_POC.utility.AuthenticationRequest;
 import com.EticPlus_POC.utility.JwtUtil;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,6 +35,8 @@ public class UserService {
 
     @Autowired
     private StoreCategoryService storeCategoryService;
+    @Autowired
+    private ActionLogRepository actionLogRepository;
 
     public User registerUser(UserRegistrationRequest request) {
         validateStoreName(request.getStoreName());
@@ -50,7 +55,9 @@ public class UserService {
             throw new BusinessException("STORE_NAME_EXISTS", "Store name already exists.");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        logAction(request.getStoreName(), "User Registered", savedUser.getId(), "User registered with package type: " + request.getPackageType());
+        return savedUser;
     }
 
     public String authenticateUser(AuthenticationRequest authenticationRequest) {
@@ -120,6 +127,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             userRepository.deleteById(userId);
+            logAction(user.get().getStoreName(), "Account Deleted", userId, "User account deleted");
             return true;
         }
         return false;
@@ -143,6 +151,7 @@ public class UserService {
                     plugin.setActive(!plugin.isActive());
                     System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
                     userRepository.save(user);
+                    logAction(user.getStoreName(), "Plugin toggled: " + pluginName, user.getId(), "Plugin status changed to " + (plugin.isActive() ? "active" : "inactive"));
                 } else {
                     throw new BusinessException("PLUGIN_LIMIT_EXCEEDED", "Cannot activate more plugins.");
                 }
@@ -213,4 +222,9 @@ public class UserService {
     private String getJwtToken(String authorizationHeader) {
         return authorizationHeader.substring(7);
     }
+    private void logAction(String storeName, String action, String userId, String actionDetails) {
+        ActionLog actionLog = new ActionLog(storeName, action, LocalDateTime.now(), userId, actionDetails);
+        actionLogRepository.save(actionLog);
+    }
+
 }
