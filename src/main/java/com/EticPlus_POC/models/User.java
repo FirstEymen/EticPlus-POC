@@ -29,11 +29,11 @@ public class User {
 
     public void initializePlugins() {
         plugins.clear();
-        plugins.add(new Plugin("Benim Sayfam", true));
+        plugins.add(new Plugin("My Page", true));
 
-        plugins.add(new Plugin("Günlük Satış Raporu", false));
+        plugins.add(new Plugin("Daily Sales Report", false));
         plugins.add(new Plugin("Google Analytics", false));
-        plugins.add(new Plugin("Chatmate", false));
+        plugins.add(new Plugin("Chat-mate", false));
         plugins.add(new Plugin("ReviewMe", false));
         plugins.add(new Plugin("GiftSend", false));
 
