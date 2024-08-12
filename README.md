@@ -14,7 +14,6 @@ This documentation provides detailed information about the API endpoints availab
   {
     "storeName": "string",
     "password": "string",
-    "email": "string",
     "category": "string",
     "packageType": "string"
   }
@@ -31,7 +30,7 @@ This documentation provides detailed information about the API endpoints availab
 - **Request Body:**
   ```json
   {
-  "username": "string",
+  "storeName": "string",
   "password": "string"
   }
 - **Response:**
