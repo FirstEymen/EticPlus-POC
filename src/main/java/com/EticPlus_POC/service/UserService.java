@@ -142,14 +142,14 @@ public class UserService {
 
         user.getPlugins().forEach(plugin -> {
             if (plugin.getName().equals(pluginName)) {
-                if ("Benim Sayfam".equals(pluginName)) {
+                if ("My Page".equals(pluginName)) {
                     return;
                 }
                 boolean canToggle = user.getPackageType() == User.PackageType.PLATINUM ||
                         (!plugin.isActive() && activePluginsCount < 4) || plugin.isActive();
                 if (canToggle) {
                     plugin.setActive(!plugin.isActive());
-                    System.out.println("Mağaza " + user.getStoreName() + ", " + pluginName + " isimli eklentiyi " + (plugin.isActive() ? "aktif" : "deaktif") + " etti.");
+                    System.out.println("Store " + user.getStoreName() + " has " + (plugin.isActive() ? "activated" : "deactivated") + " the plugin named " + pluginName + ".");
                     userRepository.save(user);
                     logAction(user.getStoreName(), "Plugin toggled: " + pluginName, user.getId(), "Plugin status changed to " + (plugin.isActive() ? "active" : "inactive"));
                 } else {
