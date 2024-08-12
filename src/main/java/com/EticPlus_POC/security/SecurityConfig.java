@@ -53,7 +53,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.applyPermitDefaultValues();
-        configuration.setAllowedOrigins(List.of("https://eticplus-d9b8779666ba.herokuapp.com/","http://localhost:3000/","http://192.168.68.80:3000/","https://bilir-d108588758e4.herokuapp.com/","http://localhost:3002/"));
+        configuration.setAllowedOrigins(List.of("https://eticplus-d9b8779666ba.herokuapp.com/","http://localhost:3000","http://192.168.68.80:3000/","https://bilir-d108588758e4.herokuapp.com/","http://localhost:3002/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
