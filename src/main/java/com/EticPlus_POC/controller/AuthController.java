@@ -85,11 +85,7 @@ public class AuthController {
     public ResponseEntity<?> updateProfile(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UserUpdateRequest updateRequest) {
         User user = userService.getUserFromToken(authorizationHeader);
         boolean isUpdated = userService.updateUserProfile(user, updateRequest);
-        if (isUpdated) {
-            return ResponseEntity.ok("Profile updated successfully.");
-        } else {
-            return ResponseEntity.ok("No updates made.");
-        }
+        return ResponseEntity.ok(isUpdated ? "Profile updated successfully." : "No updates made.");
     }
 
     @PostMapping("/logout")
@@ -101,11 +97,7 @@ public class AuthController {
     public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String authorizationHeader) {
         User user = userService.getUserFromToken(authorizationHeader);
         boolean success = userService.deleteAccount(user.getId());
-        if (success) {
-            return ResponseEntity.ok("Account has been deleted.");
-        } else {
-            return ResponseEntity.badRequest().body("Error deleting account.");
-        }
+        return ResponseEntity.ok(success ? "Account has been deleted." : "Error deleting account.");
     }
 
     @GetMapping("/actions")

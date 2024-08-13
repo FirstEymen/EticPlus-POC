@@ -80,7 +80,6 @@ public class UserService {
         boolean isUpdated = false;
 
         StringBuilder actionDetails = new StringBuilder("User profile updated with the following changes:");
-
         if (updateRequest.getCurrentPassword() != null && !updateRequest.getCurrentPassword().trim().isEmpty()) {
             if (!passwordEncoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
                 throw new BusinessException("INVALID_CURRENT_PASSWORD", "Current password is incorrect.");
@@ -96,7 +95,8 @@ public class UserService {
                 }
             }
         }
-        if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
+        if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty() &&
+                !updateRequest.getStoreName().equals(user.getStoreName())) {
             Optional<User> existingUser = userRepository.findByStoreName(updateRequest.getStoreName());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
                 throw new BusinessException("STORE_NAME_EXISTS", "Store name already exists.");
@@ -106,7 +106,8 @@ public class UserService {
             actionDetails.append(" Store name changed to '").append(updateRequest.getStoreName()).append("'.");
             isUpdated = true;
         }
-        if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
+        if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty() &&
+                !updateRequest.getCategory().equals(user.getCategory().getName())) {
             StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
             if (category != null) {
                 user.setCategory(category);
@@ -116,7 +117,7 @@ public class UserService {
                 throw new BusinessException("INVALID_CATEGORY", "Invalid category.");
             }
         }
-        if (updateRequest.getPackageType() != null) {
+        if (updateRequest.getPackageType() != null && !updateRequest.getPackageType().equals(user.getPackageType())) {
             user.setPackageType(updateRequest.getPackageType());
             user.initializePlugins();
             actionDetails.append(" Package type changed to '").append(updateRequest.getPackageType()).append("'.");
@@ -141,8 +142,9 @@ public class UserService {
             userRepository.deleteById(userId);
             logAction(user.get().getStoreName(), "Account Deleted", userId, "User account deleted");
             return true;
+        } else {
+            throw new BusinessException("USER_NOT_FOUND", "User not found.");
         }
-        return false;
     }
 
     public Optional<User> findByStoreName(String storeName) {
