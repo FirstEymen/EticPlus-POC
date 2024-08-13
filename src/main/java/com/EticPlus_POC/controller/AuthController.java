@@ -119,4 +119,5 @@ public class AuthController {
         List<ActionLog> actions = actionLogRepository.findByStoreName(storeName);
         return ResponseEntity.ok(actions);
     }
+
 }

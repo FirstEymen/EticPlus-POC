@@ -1,5 +1,7 @@
 package com.EticPlus_POC.controller;
 
+import com.EticPlus_POC.dto.UserProfileResponse;
+import com.EticPlus_POC.dto.UserUpdateRequest;
 import com.EticPlus_POC.exception.BusinessException;
 import com.EticPlus_POC.models.Plugin;
 import com.EticPlus_POC.models.StoreCategory;
@@ -112,4 +114,46 @@ class AuthControllerTest {
         assertEquals(1, response.getBody().size());
         assertEquals("Category1", response.getBody().get(0).getName());
     }
+
+    @Test
+    void testGetProfile() {
+        User user = new User();
+        user.setStoreName("StoreName");
+        user.setPassword("Password123");
+        StoreCategory category = new StoreCategory("Category1", "Category1");
+        user.setCategory(category);
+        user.setPackageType(User.PackageType.GOLD);
+        when(userService.getUserFromToken(anyString())).thenReturn(user);
+        ResponseEntity<?> response = authController.getProfile("Bearer token");
+        assertEquals(200, response.getStatusCodeValue());
+        UserProfileResponse profileResponse = (UserProfileResponse) response.getBody();
+        assertNotNull(profileResponse);
+        assertEquals("StoreName", profileResponse.getStoreName());
+        assertEquals("Password123", profileResponse.getPassword());
+        assertEquals("Category1", profileResponse.getCategory());
+        assertEquals("GOLD", profileResponse.getPackageType());
+    }
+
+    @Test
+    void testUpdateProfile() {
+        User user = new User();
+        UserUpdateRequest updateRequest = new UserUpdateRequest();
+        updateRequest.setStoreName("NewStoreName");
+        updateRequest.setNewPassword("NewPassword123");
+
+        when(userService.getUserFromToken(anyString())).thenReturn(user);
+        when(userService.updateUserProfile(any(User.class), any(UserUpdateRequest.class))).thenReturn(true);
+
+        ResponseEntity<?> response = authController.updateProfile("Bearer token", updateRequest);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Profile updated successfully.", response.getBody());
+    }
+
+    @Test
+    void testLogout() {
+        ResponseEntity<?> response = authController.logout();
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("You have been successfully logged out.", response.getBody());
+    }
+
 }
