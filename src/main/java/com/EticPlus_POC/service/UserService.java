@@ -142,8 +142,9 @@ public class UserService {
             userRepository.deleteById(userId);
             logAction(user.get().getStoreName(), "Account Deleted", userId, "User account deleted");
             return true;
+        } else {
+            throw new BusinessException("USER_NOT_FOUND", "User not found.");
         }
-        return false;
     }
 
     public Optional<User> findByStoreName(String storeName) {
