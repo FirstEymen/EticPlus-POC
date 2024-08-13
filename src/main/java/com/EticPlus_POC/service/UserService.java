@@ -80,6 +80,7 @@ public class UserService {
         boolean isUpdated = false;
 
         StringBuilder actionDetails = new StringBuilder("User profile updated with the following changes:");
+
         if (updateRequest.getCurrentPassword() != null && !updateRequest.getCurrentPassword().trim().isEmpty()) {
             if (!passwordEncoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
                 throw new BusinessException("INVALID_CURRENT_PASSWORD", "Current password is incorrect.");
@@ -93,6 +94,12 @@ public class UserService {
                 } else {
                     throw new BusinessException("PASSWORD_MISMATCH", "New passwords do not match.");
                 }
+            } else {
+                throw new BusinessException("NEW_PASSWORD_REQUIRED", "New password must be provided when changing the current password.");
+            }
+        } else {
+            if (updateRequest.getNewPassword() != null && !updateRequest.getNewPassword().trim().isEmpty()) {
+                throw new BusinessException("CURRENT_PASSWORD_REQUIRED", "Current password must be provided to set a new password.");
             }
         }
         if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty() &&
