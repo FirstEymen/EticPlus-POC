@@ -79,6 +79,23 @@ public class UserService {
     public boolean updateUserProfile(User user, UserUpdateRequest updateRequest) {
         boolean isUpdated = false;
 
+        if (updateRequest.getCurrentPassword() != null && !updateRequest.getCurrentPassword().trim().isEmpty()) {
+
+            if (!passwordEncoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
+                throw new BusinessException("INVALID_CURRENT_PASSWORD", "Current password is incorrect.");
+            }
+
+            if (updateRequest.getNewPassword() != null && !updateRequest.getNewPassword().trim().isEmpty()) {
+                if (updateRequest.getNewPassword().equals(updateRequest.getConfirmNewPassword())) {
+                    validatePassword(updateRequest.getNewPassword());
+                    user.setPassword(passwordEncoder.encode(updateRequest.getNewPassword()));
+                    isUpdated = true;
+                } else {
+                    throw new BusinessException("PASSWORD_MISMATCH", "New passwords do not match.");
+                }
+            }
+        }
+
         if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
             validateStoreName(updateRequest.getStoreName());
             user.setStoreName(updateRequest.getStoreName());
@@ -99,16 +116,6 @@ public class UserService {
             user.setPackageType(updateRequest.getPackageType());
             user.initializePlugins();
             isUpdated = true;
-        }
-
-        if (updateRequest.getPassword() != null && !updateRequest.getPassword().trim().isEmpty()) {
-            if (updateRequest.getConfirmPassword() != null && updateRequest.getPassword().equals(updateRequest.getConfirmPassword())) {
-                validatePassword(updateRequest.getPassword());
-                user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
-                isUpdated = true;
-            } else {
-                throw new BusinessException("PASSWORD_MISMATCH", "Passwords do not match.");
-            }
         }
 
         if (isUpdated) {

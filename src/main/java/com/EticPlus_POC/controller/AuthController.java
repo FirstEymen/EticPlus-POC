@@ -86,7 +86,7 @@ public class AuthController {
         User user = userService.getUserFromToken(authorizationHeader);
         boolean isUpdated = userService.updateUserProfile(user, updateRequest);
         if (isUpdated) {
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok("Profile updated successfully.");
         } else {
             return ResponseEntity.ok("No updates made.");
         }

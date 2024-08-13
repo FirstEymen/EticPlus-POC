@@ -6,8 +6,9 @@ public class UserUpdateRequest {
     private String storeName;
     private String category;
     private User.PackageType packageType;
-    private String password;
-    private String confirmPassword;
+    private String currentPassword;
+    private String newPassword;
+    private String confirmNewPassword;
 
     public String getStoreName() {
         return storeName;
@@ -33,19 +34,27 @@ public class UserUpdateRequest {
         this.packageType = packageType;
     }
 
-    public String getPassword() {
-        return password;
+    public String getCurrentPassword() {
+        return currentPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 }
