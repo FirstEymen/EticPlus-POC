@@ -80,11 +80,9 @@ public class UserService {
         boolean isUpdated = false;
 
         if (updateRequest.getCurrentPassword() != null && !updateRequest.getCurrentPassword().trim().isEmpty()) {
-
             if (!passwordEncoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
                 throw new BusinessException("INVALID_CURRENT_PASSWORD", "Current password is incorrect.");
             }
-
             if (updateRequest.getNewPassword() != null && !updateRequest.getNewPassword().trim().isEmpty()) {
                 if (updateRequest.getNewPassword().equals(updateRequest.getConfirmNewPassword())) {
                     validatePassword(updateRequest.getNewPassword());
@@ -97,6 +95,10 @@ public class UserService {
         }
 
         if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
+            Optional<User> existingUser = userRepository.findByStoreName(updateRequest.getStoreName());
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
+                throw new BusinessException("STORE_NAME_EXISTS", "Store name already exists.");
+            }
             validateStoreName(updateRequest.getStoreName());
             user.setStoreName(updateRequest.getStoreName());
             isUpdated = true;
