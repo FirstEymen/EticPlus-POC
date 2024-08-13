@@ -169,8 +169,8 @@ public class UserService {
         if (storeName.length() > 20) {
             throw new BusinessException("INVALID_STORE_NAME", "Store name cannot be more than 20 characters long.");
         }
-        if (storeName.startsWith(" ")) {
-            throw new BusinessException("INVALID_STORE_NAME", "Store name cannot start with a space.");
+        if (storeName.startsWith(" ") || storeName.endsWith(" ")) {
+            throw new BusinessException("INVALID_STORE_NAME", "Store name cannot start or end with a space.");
         }
         if (storeName.contains("  ")) {
             throw new BusinessException("INVALID_STORE_NAME", "Store name cannot contain consecutive spaces.");
