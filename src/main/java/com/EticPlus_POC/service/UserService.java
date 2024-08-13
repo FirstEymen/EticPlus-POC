@@ -79,6 +79,8 @@ public class UserService {
     public boolean updateUserProfile(User user, UserUpdateRequest updateRequest) {
         boolean isUpdated = false;
 
+        StringBuilder actionDetails = new StringBuilder("User profile updated with the following changes:");
+
         if (updateRequest.getCurrentPassword() != null && !updateRequest.getCurrentPassword().trim().isEmpty()) {
             if (!passwordEncoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
                 throw new BusinessException("INVALID_CURRENT_PASSWORD", "Current password is incorrect.");
@@ -87,13 +89,13 @@ public class UserService {
                 if (updateRequest.getNewPassword().equals(updateRequest.getConfirmNewPassword())) {
                     validatePassword(updateRequest.getNewPassword());
                     user.setPassword(passwordEncoder.encode(updateRequest.getNewPassword()));
+                    actionDetails.append(" Password changed.");
                     isUpdated = true;
                 } else {
                     throw new BusinessException("PASSWORD_MISMATCH", "New passwords do not match.");
                 }
             }
         }
-
         if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty()) {
             Optional<User> existingUser = userRepository.findByStoreName(updateRequest.getStoreName());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
@@ -101,27 +103,28 @@ public class UserService {
             }
             validateStoreName(updateRequest.getStoreName());
             user.setStoreName(updateRequest.getStoreName());
+            actionDetails.append(" Store name changed to '").append(updateRequest.getStoreName()).append("'.");
             isUpdated = true;
         }
-
         if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty()) {
             StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
             if (category != null) {
                 user.setCategory(category);
+                actionDetails.append(" Category changed to '").append(updateRequest.getCategory()).append("'.");
                 isUpdated = true;
             } else {
                 throw new BusinessException("INVALID_CATEGORY", "Invalid category.");
             }
         }
-
         if (updateRequest.getPackageType() != null) {
             user.setPackageType(updateRequest.getPackageType());
             user.initializePlugins();
+            actionDetails.append(" Package type changed to '").append(updateRequest.getPackageType()).append("'.");
             isUpdated = true;
         }
-
         if (isUpdated) {
             userRepository.save(user);
+            logAction(user.getStoreName(), "Profile Updated", user.getId(), actionDetails.toString());
         }
         return isUpdated;
     }
@@ -231,7 +234,7 @@ public class UserService {
     private String getJwtToken(String authorizationHeader) {
         return authorizationHeader.substring(7);
     }
-    private void logAction(String storeName, String action, String userId, String actionDetails) {
+    public void logAction(String storeName, String action, String userId, String actionDetails) {
         ActionLog actionLog = new ActionLog(storeName, action, LocalDateTime.now(), userId, actionDetails);
         actionLogRepository.save(actionLog);
     }
