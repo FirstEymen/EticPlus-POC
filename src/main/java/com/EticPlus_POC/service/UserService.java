@@ -102,17 +102,6 @@ public class UserService {
                 throw new BusinessException("CURRENT_PASSWORD_REQUIRED", "Current password must be provided to set a new password.");
             }
         }
-        if (updateRequest.getStoreName() != null && !updateRequest.getStoreName().trim().isEmpty() &&
-                !updateRequest.getStoreName().equals(user.getStoreName())) {
-            Optional<User> existingUser = userRepository.findByStoreName(updateRequest.getStoreName());
-            if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
-                throw new BusinessException("STORE_NAME_EXISTS", "Store name already exists.");
-            }
-            validateStoreName(updateRequest.getStoreName());
-            user.setStoreName(updateRequest.getStoreName());
-            actionDetails.append(" Store name changed to '").append(updateRequest.getStoreName()).append("'.");
-            isUpdated = true;
-        }
         if (updateRequest.getCategory() != null && !updateRequest.getCategory().trim().isEmpty() &&
                 !updateRequest.getCategory().equals(user.getCategory().getName())) {
             StoreCategory category = storeCategoryService.findByName(updateRequest.getCategory());
