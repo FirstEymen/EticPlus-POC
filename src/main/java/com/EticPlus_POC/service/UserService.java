@@ -217,6 +217,9 @@ public class UserService {
         if (password.contains(" ")) {
             throw new BusinessException("INVALID_PASSWORD", "Password cannot contain spaces.");
         }
+        if (!password.matches("^[^\\s].*[^\\s]$")) {
+            throw new BusinessException("INVALID_PASSWORD", "Password cannot start or end with spaces.");
+        }
         if (!password.matches(".*[A-Z].*")) {
             throw new BusinessException("INVALID_PASSWORD", "Password must contain at least one uppercase letter.");
         }
