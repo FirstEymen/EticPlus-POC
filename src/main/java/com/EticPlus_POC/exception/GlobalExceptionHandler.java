@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        ErrorResponse errorResponse = new ErrorResponse("401", "Unauthorized access!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
     public static class ErrorResponse {
         private String errorCode;
         private String errorDesc;
